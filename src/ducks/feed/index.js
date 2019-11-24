@@ -36,6 +36,10 @@ export function selectFeed(state) {
   return state.feed;
 }
 
+export function selectIsLoading(state) {
+  return state.feed.status !== 'idle';
+}
+
 export default function reducer (state = initialState, action) {
   switch (action.type) {
   case FEED_REQUEST:
