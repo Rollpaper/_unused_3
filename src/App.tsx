@@ -1,19 +1,32 @@
 import * as React from 'react';
-import { FC } from 'react';
-import { connect } from 'react-redux';
+import { FC, FormEventHandler, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { fetchFeed, selectFeed } from './ducks/feed';
 
 import './App.css';
 
-const AppComponent: FC = () => {
+export const App: FC = () => {
+  const dispatch = useDispatch();
+
+  const feed = useSelector(selectFeed);
+
+  const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(evt => {
+    evt.preventDefault();
+
+    const urlElem = evt.currentTarget.elements.namedItem('url') as HTMLInputElement;
+    // FIXME: validate URL
+    const url = urlElem.value;
+
+    dispatch(fetchFeed(url));
+  }, [ dispatch ]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-      </header>
+    <div className="app">
+      <form onSubmit={handleSubmit}>
+        <input name="url" placeholder="URL" />
+        <button disabled={feed.status !== 'idle'}>Fetch</button>
+      </form>
     </div>
   );
 };
-
-export const App = connect()(AppComponent);
